@@ -39,6 +39,8 @@ st.markdown("""
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
     font-size: 17px;
     border-left: 6px solid #FF385C;
+    z-index: 1;
+    position: relative;
 }
 
 @media (prefers-color-scheme: light) {
@@ -87,10 +89,10 @@ with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
     current_burn = st.number_input("Current Monthly Burn ($)", help="Total monthly cash outflows before new hires", value=st.session_state.get("current_burn", 0))
     added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", help="Monthly cost increase due to hiring after month 6", value=st.session_state.get("added_headcount_burn", 0))
     revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month", value=st.session_state.get("revenue_ramp", 0))
-    runway_months = st.selectbox("Runway Duration (Months)", help="How many months of runway you are planning for", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
-    option_pool_percent = st.slider("Option Pool Refresh (%)", help="Equity set aside for new hires post-funding",, 0, 30, st.session_state.get("option_pool_percent", 0))
-    input_raise_amount = st.number_input("Raise Amount ($)", help="The amount of capital you plan to raise",, value=st.session_state.get("raise_amount", 0))
-    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", help="Company valuation before the new capital is added",, value=st.session_state.get("pre_money_valuation", 0))
+    runway_months = st.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
+    option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
+    input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
+    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
     bridge_round = st.checkbox("Include $1M Bridge Round", help="Toggle to simulate an extra $1M in interim funding", value=st.session_state.get("bridge_round", False))
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Example"):
@@ -156,7 +158,11 @@ col1, col2 = st.columns([2, 1])
 
 with col2:
     st.subheader("🧠 Explain My Results")
-    st.markdown(plain_english)
+    st.markdown(f"""
+<div style='overflow-wrap: break-word; word-break: break-word; white-space: normal;'>
+{plain_english}
+</div>
+""", unsafe_allow_html=True)
 
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
@@ -169,6 +175,19 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col1:
+    # Chart
+    st.subheader("📊 Burn vs Capital Chart")
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(months, cumulative_burn, label='Cumulative Burn', color='#FF385C', linewidth=2)
+    ax.axhline(y=adjusted_raise, linestyle='--', color='#008489', label='Capital Raised')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Amount ($)')
+    ax.set_title('Cumulative Burn vs Capital')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    st.pyplot(fig)
+
     # Table
     st.subheader("📅 Runway Breakdown")
     runway_df = pd.DataFrame({
@@ -178,7 +197,7 @@ with col1:
         "Net Burn ($)": net_burn,
         "Cumulative Burn ($)": cumulative_burn
     })
-    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True)
+    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True, height=500)
 
     # Download option
     csv = runway_df.to_csv(index=False).encode('utf-8')
@@ -187,4 +206,16 @@ with col1:
         data=csv,
         file_name='runway_dilution_table.csv',
         mime='text/csv'
+    )
+
+    # PDF export placeholder (can be extended with pdfkit, ReportLab, etc.)
+    st.download_button(
+        label="📄 Export Summary as PDF",
+        data=plain_english.encode('utf-8'),
+        file_name='runway_summary.pdf',
+        mime='application/pdf',
+        key='pdf-download-summary'
+    ),
+        file_name='runway_summary.pdf',
+        mime='application/pdf'
     )
