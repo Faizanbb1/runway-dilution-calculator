@@ -207,8 +207,8 @@ with col1:
     import altair as alt
     chart_data = pd.DataFrame({
         "Month": months,
-        "Cumulative Burn": cumulative_burn,
-        "Capital Raised": [adjusted_raise] * len(cumulative_burn)
+        "Cumulative Burn": cumulative_burn.astype(float),
+        "Capital Raised": [float(adjusted_raise)] * len(cumulative_burn)
     })
 
     base = alt.Chart(chart_data).transform_fold(
