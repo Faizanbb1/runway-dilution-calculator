@@ -138,7 +138,18 @@ runway_end_month = (
     else runway_months
 )
 
-
+# Chart display below
+st.subheader("📊 Burn vs Capital Chart")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+ax.plot(months, cumulative_burn, label='Cumulative Burn', color='#FF385C', linewidth=2)
+ax.axhline(y=adjusted_raise, linestyle='--', color='#008489', label='Capital Raised')
+ax.set_xlabel('Month')
+ax.set_ylabel('Cumulative Burn ($)')
+ax.set_title('Burn vs Capital Raised')
+ax.legend()
+ax.grid(True, alpha=0.3)
+st.pyplot(fig)
 
 # Summary (moved to top with layout split)
 # Generate insight and financial health score
@@ -153,12 +164,11 @@ else:
 plain_english = f"""
 ### Summary Insights:
 
-- You are planning to raise **${input_raise_amount:,.0f}**  
-  on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
+- You are planning to raise: ${input_raise_amount:,.0f}
 - This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
 - Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
 - **Runway Status:** {runway_color}
-- **Financial Health Score:**** {health_score:.0f}/100
+- **Financial Health Score:** {health_score:.0f}/100
 """
 
 col1, col2 = st.columns([2, 1])
