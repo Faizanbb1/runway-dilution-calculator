@@ -19,7 +19,7 @@ input_raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.sessio
 input_pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
 bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
-# Load and Save buttons at bottom of sidebar
+# Load, Save, and Reset buttons at bottom of sidebar
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Inputs"):
     st.session_state.loaded = True
@@ -34,6 +34,11 @@ if st.sidebar.button("📥 Load Inputs"):
 
 if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
+
+if st.sidebar.button("🔄 Reset Inputs"):
+    for key in ["current_burn", "added_headcount_burn", "revenue_ramp", "runway_months", "option_pool_percent", "raise_amount", "pre_money_valuation", "bridge_round"]:
+        st.session_state[key] = 0 if key != "runway_months" else 24
+    st.success("Inputs have been reset.")
 
 # Adjusted values
 adjusted_raise = input_raise_amount
