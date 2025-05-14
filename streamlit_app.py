@@ -46,10 +46,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title
-st.markdown("<h1 style='margin-bottom: 0.5rem;'>\ud83d\udcca Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
 st.markdown("""
 <p style='color: #777; font-size: 18px;'>
-    \ud83d\udca1 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
+    💡 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
     Your summary and projections will appear instantly below.</em>
 </p>
 """, unsafe_allow_html=True)
@@ -59,7 +59,7 @@ if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
 # Sidebar inputs
-with st.sidebar.expander("\ud83d\udee0\ufe0f Configure Your Inputs", expanded=True):
+with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
     current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
     added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
     revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
@@ -69,7 +69,7 @@ with st.sidebar.expander("\ud83d\udee0\ufe0f Configure Your Inputs", expanded=Tr
     input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
     bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
-if st.sidebar.button("\ud83d\udcc5 Load Example"):
+if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
     st.session_state.current_burn = 75000
     st.session_state.added_headcount_burn = 30000
@@ -123,7 +123,7 @@ with col2:
     st.text(plain_english)
     st.download_button(
         label="📄 Export Summary as PDF",
-        data=plain_english.encode('utf-8'),
+        data=plain_english.encode('utf-8', errors='ignore'),
         file_name='runway_summary.pdf',
         mime='application/pdf'
     )
