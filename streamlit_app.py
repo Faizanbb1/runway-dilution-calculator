@@ -35,7 +35,7 @@ if st.sidebar.button("📥 Load Inputs"):
 if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
 
-if st.sidebar.button("🔄 Reset Inputs"):
+def reset_inputs():
     st.session_state.current_burn = 0
     st.session_state.added_headcount_burn = 0
     st.session_state.revenue_ramp = 0
@@ -44,7 +44,11 @@ if st.sidebar.button("🔄 Reset Inputs"):
     st.session_state.raise_amount = 0
     st.session_state.pre_money_valuation = 0
     st.session_state.bridge_round = False
+    st.session_state.loaded = False
     st.experimental_rerun()
+
+if st.sidebar.button("🔄 Reset Inputs"):
+    reset_inputs()
 
 # Adjusted values
 adjusted_raise = input_raise_amount
