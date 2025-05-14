@@ -36,9 +36,16 @@ if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
 
 if st.sidebar.button("🔄 Reset Inputs"):
-    for key in ["current_burn", "added_headcount_burn", "revenue_ramp", "runway_months", "option_pool_percent", "raise_amount", "pre_money_valuation", "bridge_round"]:
-        st.session_state[key] = 0 if key != "runway_months" else 24
+    st.session_state.current_burn = 0
+    st.session_state.added_headcount_burn = 0
+    st.session_state.revenue_ramp = 0
+    st.session_state.runway_months = 24
+    st.session_state.option_pool_percent = 0
+    st.session_state.raise_amount = 0
+    st.session_state.pre_money_valuation = 0
+    st.session_state.bridge_round = False
     st.success("Inputs have been reset.")
+    st.experimental_rerun()
 
 # Adjusted values
 adjusted_raise = input_raise_amount
