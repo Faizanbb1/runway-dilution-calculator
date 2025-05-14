@@ -2,32 +2,14 @@ import streamlit as st
 import pandas as pd
 
 # Title
-st.title("Runway & Dilution Calculator")
+st.title("🚀 Runway & Dilution Calculator")
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
-# Load and Save buttons
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Load Inputs"):
-        st.session_state.loaded = True
-        st.session_state.current_burn = 75000
-        st.session_state.added_headcount_burn = 30000
-        st.session_state.revenue_ramp = 10000
-        st.session_state.runway_months = 24
-        st.session_state.option_pool_percent = 10
-        st.session_state.raise_amount = 3000000
-        st.session_state.pre_money_valuation = 10000000
-        st.session_state.bridge_round = False
-
-with col2:
-    if st.button("Save Changes"):
-        st.success("Inputs saved!")
-
 # Sidebar inputs with optional prefill
-st.sidebar.header("Inputs")
+st.sidebar.header("📊 Inputs")
 current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
 added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
@@ -36,6 +18,22 @@ option_pool_percent = st.sidebar.slider("Option Pool Refresh (%)", 0, 30, st.ses
 raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
 pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
 bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
+
+# Load and Save buttons at bottom of sidebar
+st.sidebar.markdown("---")
+if st.sidebar.button("📥 Load Inputs"):
+    st.session_state.loaded = True
+    st.session_state.current_burn = 75000
+    st.session_state.added_headcount_burn = 30000
+    st.session_state.revenue_ramp = 10000
+    st.session_state.runway_months = 24
+    st.session_state.option_pool_percent = 10
+    st.session_state.raise_amount = 3000000
+    st.session_state.pre_money_valuation = 10000000
+    st.session_state.bridge_round = False
+
+if st.sidebar.button("💾 Save Changes"):
+    st.success("Inputs saved!")
 
 # Option Pool and Bridge Round Adjustments
 post_money_valuation = pre_money_valuation + raise_amount
@@ -70,12 +68,25 @@ runway_df = pd.DataFrame({
 })
 
 # Display table
-st.subheader("Runway Table")
+st.subheader("📉 Runway Table")
 st.dataframe(runway_df.style.format("${:,.0f}"))
 
+# Download option
+csv = runway_df.to_csv(index=False).encode('utf-8')
+st.download_button(
+    label="📥 Download Table as Excel (CSV)",
+    data=csv,
+    file_name='runway_dilution_table.csv',
+    mime='text/csv'
+)
+
 # Summary
-st.subheader("Summary")
-st.markdown(f"**Adjusted Raise Amount:** ${raise_amount:,.0f}")
-st.markdown(f"**Post-Money Valuation:** ${post_money_valuation:,.0f}")
-st.markdown(f"**Ownership Sold:** {ownership_sold * 100:.2f}%")
-st.markdown(f"**Capital Runs Out In:** Month {runway_end_month}")
+st.subheader("📈 Summary")
+st.markdown(f"""
+<div style='background-color:#f0f2f6; padding:20px; border-radius:10px;'>
+    <h4 style='color:#1f77b4;'>💰 Adjusted Raise Amount:</h4> <b>${raise_amount:,.0f}</b><br><br>
+    <h4 style='color:#ff7f0e;'>📊 Post-Money Valuation:</h4> <b>${post_money_valuation:,.0f}</b><br><br>
+    <h4 style='color:#2ca02c;'>📉 Ownership Sold:</h4> <b>{ownership_sold * 100:.2f}%</b><br><br>
+    <h4 style='color:#d62728;'>⏳ Capital Runs Out In:</h4> <b>Month {runway_end_month}</b>
+</div>
+""", unsafe_allow_html=True)
