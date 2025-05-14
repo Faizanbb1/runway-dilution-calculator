@@ -156,7 +156,11 @@ col1, col2 = st.columns([2, 1])
 
 with col2:
     st.subheader("🧠 Explain My Results")
-    st.markdown(plain_english)
+    st.markdown(f"""
+<div style='overflow-wrap: break-word; word-break: break-word; white-space: normal;'>
+{plain_english}
+</div>
+""", unsafe_allow_html=True)
 
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
@@ -187,4 +191,12 @@ with col1:
         data=csv,
         file_name='runway_dilution_table.csv',
         mime='text/csv'
+    )
+
+    # PDF export placeholder (can be extended with pdfkit, ReportLab, etc.)
+    st.download_button(
+        label="📄 Export Summary as PDF",
+        data=plain_english.encode('utf-8'),
+        file_name='runway_summary.pdf',
+        mime='application/pdf'
     )
