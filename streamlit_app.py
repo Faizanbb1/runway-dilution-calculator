@@ -15,8 +15,8 @@ added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
 runway_months = st.sidebar.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
 option_pool_percent = st.sidebar.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
-raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
-pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
+input_raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
+input_pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
 bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
 # Load and Save buttons at bottom of sidebar
@@ -35,14 +35,17 @@ if st.sidebar.button("📥 Load Inputs"):
 if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
 
-# Option Pool and Bridge Round Adjustments
-post_money_valuation = pre_money_valuation + raise_amount
+# Adjusted values
+adjusted_raise = input_raise_amount
+adjusted_post_money = input_pre_money_valuation + adjusted_raise
+
 if option_pool_percent:
-    raise_amount += (option_pool_percent / 100) * post_money_valuation
+    adjusted_raise += (option_pool_percent / 100) * adjusted_post_money
 if bridge_round:
-    raise_amount += 1_000_000
-post_money_valuation = pre_money_valuation + raise_amount
-ownership_sold = raise_amount / post_money_valuation if post_money_valuation else 0
+    adjusted_raise += 1_000_000
+
+adjusted_post_money = input_pre_money_valuation + adjusted_raise
+ownership_sold = adjusted_raise / adjusted_post_money if adjusted_post_money else 0
 
 # Runway Table Calculations
 months = list(range(1, runway_months + 1))
@@ -53,8 +56,8 @@ cumulative_burn = pd.Series(net_burn).cumsum()
 
 # Capital exhaustion point
 runway_end_month = (
-    cumulative_burn[cumulative_burn > raise_amount].index.min() + 1
-    if (cumulative_burn > raise_amount).any()
+    cumulative_burn[cumulative_burn > adjusted_raise].index.min() + 1
+    if (cumulative_burn > adjusted_raise).any()
     else runway_months
 )
 
@@ -84,8 +87,8 @@ st.download_button(
 st.subheader("📈 Summary")
 st.markdown(f"""
 <div style='background-color:#f9f9f9; padding:25px 20px; border-radius:12px; border: 1px solid #ddd; font-size:16px;'>
-    <p><strong>💰 Adjusted Raise Amount:</strong> ${raise_amount:,.0f}</p>
-    <p><strong>📊 Post-Money Valuation:</strong> ${post_money_valuation:,.0f}</p>
+    <p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
+    <p><strong>📊 Post-Money Valuation:</strong> ${adjusted_post_money:,.0f}</p>
     <p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
     <p><strong>⏳ Capital Runs Out In:</strong> Month {runway_end_month}</p>
 </div>
