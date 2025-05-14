@@ -164,3 +164,5 @@ with col1:
         file_name='runway_dilution_table.csv',
         mime='text/csv'
     )
+
+# Note: Chart section removed per user request
