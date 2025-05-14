@@ -8,23 +8,32 @@ st.set_page_config(page_title="Runway & Dilution Calculator", layout="wide")
 # Custom CSS for premium UI
 st.markdown("""
     <style>
-        html, body, [class*="css"]  {
+        /* GLOBAL RESET TO LIGHT CREAM */
+        html, body, [class*="st-"], .block-container {
+            background-color: #fffaf2 !important;
+            color: #333 !important;
             font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar styling */
+        .css-1d391kg, .css-1v0mbdj, .css-1v3fvcr, .css-1cpxqw2, .css-1dp5vir {
+            background-color: #fffaf2 !important;
+        }
+
+        .sidebar .sidebar-content, .css-hxt7ib {
             background-color: #fffaf2 !important;
             color: #333 !important;
         }
 
-        .sidebar .sidebar-content {
-            background-color: #ffffff !important;
-        }
-
-        h1, h2, h3 {
+        /* Headings and highlights */
+        h1, h2, h3, h4, h5 {
             color: #FF385C !important;
         }
 
+        /* Buttons */
         .stButton > button {
-            background-color: #FF385C;
-            color: white;
+            background-color: #FF385C !important;
+            color: white !important;
             padding: 10px 24px;
             border-radius: 12px;
             border: none;
@@ -33,56 +42,49 @@ st.markdown("""
         }
 
         .stDownloadButton button {
-            background-color: #008489;
-            color: white;
+            background-color: #008489 !important;
+            color: white !important;
             border-radius: 10px;
             font-weight: 600;
         }
 
+        /* Inputs and widgets */
+        input, textarea, .stNumberInput, .stSelectbox, .stSlider {
+            background-color: white !important;
+            color: #333 !important;
+            border-radius: 10px !important;
+        }
+
+        /* DataFrame styling */
+        .stDataFrame {
+            background-color: white !important;
+            border-radius: 12px !important;
+            padding: 12px;
+            color: #333 !important;
+        }
+
+        /* Summary box */
         .summary-box {
             padding: 25px;
             border-radius: 12px;
+            background: linear-gradient(to right, #fffefc, #fdf9f3) !important;
             box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
-            font-size: 17px;
+            color: #333 !important;
             border-left: 6px solid #FF385C;
             margin-bottom: 1.5rem;
-            z-index: 1;
-            position: relative;
-            background: linear-gradient(to right, #fffefc, #fdf9f3);
-            color: #333;
         }
 
-        .css-1d391kg input {
-            border-radius: 10px;
-        }
-
-        .stDataFrame {
-            background-color: white;
-            border-radius: 12px;
-            padding: 12px;
-        }
-
-        .block-container {
-            padding: 2rem 2rem 2rem 2rem;
-        }
-
-        /* Force light theme even in dark mode OS */
+        /* Override system dark mode */
         @media (prefers-color-scheme: dark) {
-            html, body, [class*="css"] {
+            html, body, [class*="st-"], .block-container, .css-hxt7ib {
                 background-color: #fffaf2 !important;
                 color: #333 !important;
             }
-            .sidebar .sidebar-content {
-                background-color: #ffffff !important;
-            }
-            .summary-box {
-                background: linear-gradient(to right, #fffefc, #fdf9f3) !important;
-                color: #333 !important;
-                border-left: 6px solid #FF385C !important;
-            }
         }
+
     </style>
 """, unsafe_allow_html=True)
+
 
 # Title
 st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
