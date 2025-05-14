@@ -77,15 +77,7 @@ with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
     option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
     input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
     input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
-    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
-added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
-revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
-runway_months = st.sidebar.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
-option_pool_percent = st.sidebar.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
-input_raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
-input_pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
-bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
-
+    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
@@ -125,13 +117,7 @@ runway_end_month = (
     else runway_months
 )
 
-.encode('utf-8')
-st.download_button(
-    label="⬇️ Download CSV",
-    data=csv,
-    file_name='runway_dilution_table.csv',
-    mime='text/csv'
-)
+
 
 # Summary (moved to top with layout split)
 col1, col2 = st.columns([2, 1])
