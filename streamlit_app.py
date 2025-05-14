@@ -1,6 +1,19 @@
 import streamlit as st
 import pandas as pd
 
+# Handle safe reset on reload
+if 'reset_trigger' in st.session_state and st.session_state.reset_trigger:
+    st.session_state.current_burn = 0
+    st.session_state.added_headcount_burn = 0
+    st.session_state.revenue_ramp = 0
+    st.session_state.runway_months = 24
+    st.session_state.option_pool_percent = 0
+    st.session_state.raise_amount = 0
+    st.session_state.pre_money_valuation = 0
+    st.session_state.bridge_round = False
+    st.session_state.loaded = False
+    st.session_state.reset_trigger = False
+
 # Title
 st.title("🚀 Runway & Dilution Calculator")
 
@@ -35,16 +48,8 @@ if st.sidebar.button("📥 Load Inputs"):
 if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
 
-def reset_inputs():
-    st.session_state.current_burn = 0
-    st.session_state.added_headcount_burn = 0
-    st.session_state.revenue_ramp = 0
-    st.session_state.runway_months = 24
-    st.session_state.option_pool_percent = 0
-    st.session_state.raise_amount = 0
-    st.session_state.pre_money_valuation = 0
-    st.session_state.bridge_round = False
-    st.session_state.loaded = False
+if st.sidebar.button("🔄 Reset Inputs"):
+    st.session_state.reset_trigger = True
     st.experimental_rerun()
 
 if st.sidebar.button("🔄 Reset Inputs"):
