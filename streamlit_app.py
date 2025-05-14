@@ -158,8 +158,7 @@ plain_english = f"""
 - Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
 - **Runway Status:** {runway_color}
 - **Financial Health Score:** {health_score:.0f}/100
-"""** {health_score:.0f}/100"
-)
+"""
 
 col1, col2 = st.columns([2, 1])
 
