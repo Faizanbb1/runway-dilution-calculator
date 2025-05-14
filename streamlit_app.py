@@ -224,8 +224,8 @@ with col1:
         height=400
     )
 
-    vertical_line = alt.Chart(pd.DataFrame({"x": [runway_end_month]})).mark_rule(
+    vertical_line = alt.Chart(pd.DataFrame({"Month": [runway_end_month]})).mark_rule(
         strokeDash=[4, 4], color="gray"
-    ).encode(x="x:Q")
+    ).encode(x="Month:Q")
 
     st.altair_chart(base + vertical_line, use_container_width=True)
