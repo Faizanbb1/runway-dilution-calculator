@@ -9,46 +9,55 @@ st.set_page_config(page_title="Runway & Dilution Calculator", layout="wide")
 st.markdown("""
     <style>
         html, body, [class*="css"]  {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f0f2f6;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
         }
         .sidebar .sidebar-content {
             background-color: #ffffff;
         }
         h1, h2, h3 {
-            color: #003262;
+            color: #FF385C;
         }
         .stButton > button {
-            background-color: #0056d2;
+            background-color: #FF385C;
             color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
+            padding: 10px 24px;
+            border-radius: 12px;
             border: none;
             font-weight: 600;
+            font-size: 16px;
         }
         .stDownloadButton button {
-            background-color: #28a745;
+            background-color: #008489;
             color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
         }
         .summary-box {
-            background: linear-gradient(to right, #ffffff, #f9f9f9);
-            border-left: 6px solid #0056d2;
+            background: linear-gradient(to right, #fffdfd, #f8f8f8);
+            border-left: 6px solid #FF385C;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.06);
+            border-radius: 12px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
             font-size: 17px;
         }
         .css-1d391kg input {
-            border-radius: 6px;
+            border-radius: 10px;
+        }
+        .stDataFrame {
+            background-color: white;
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .block-container {
+            padding: 2rem 2rem 2rem 2rem;
         }
     </style>
 """, unsafe_allow_html=True)
 
 # Title
 st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #555;'>Model your startup financing strategy with clarity and confidence.</p>", unsafe_allow_html=True)
+st.markdown("<p style='color: #777; font-size: 18px;'>Plan your raise. Predict your runway. Protect your equity.</p>", unsafe_allow_html=True)
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
@@ -124,13 +133,37 @@ st.download_button(
     mime='text/csv'
 )
 
-# Summary
-st.subheader("📈 Financial Summary")
-st.markdown(f"""
-<div class='summary-box'>
-    <p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
-    <p><strong>📊 Post-Money Valuation:</strong> ${adjusted_post_money:,.0f}</p>
-    <p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
-    <p><strong>⏳ Capital Runs Out In:</strong> Month {runway_end_month}</p>
-</div>
-""", unsafe_allow_html=True)
+# Summary (moved to top with layout split)
+col1, col2 = st.columns([2, 1])
+
+with col2:
+    st.subheader("📈 Financial Summary")
+    st.markdown(f"""
+    <div class='summary-box'>
+        <p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
+        <p><strong>📊 Post-Money Valuation:</strong> ${adjusted_post_money:,.0f}</p>
+        <p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
+        <p><strong>⏳ Capital Runs Out In:</strong> Month {runway_end_month}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col1:
+    # Table
+    st.subheader("📅 Runway Breakdown")
+    runway_df = pd.DataFrame({
+        "Month": months,
+        "Burn ($)": burn,
+        "Revenue ($)": revenue,
+        "Net Burn ($)": net_burn,
+        "Cumulative Burn ($)": cumulative_burn
+    })
+    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True)
+
+    # Download option
+    csv = runway_df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="⬇️ Download CSV",
+        data=csv,
+        file_name='runway_dilution_table.csv',
+        mime='text/csv'
+    )
