@@ -175,6 +175,19 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col1:
+    # Chart
+    st.subheader("📊 Burn vs Capital Chart")
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(months, cumulative_burn, label='Cumulative Burn', color='#FF385C', linewidth=2)
+    ax.axhline(y=adjusted_raise, linestyle='--', color='#008489', label='Capital Raised')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Amount ($)')
+    ax.set_title('Cumulative Burn vs Capital')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    st.pyplot(fig)
+
     # Table
     st.subheader("📅 Runway Breakdown")
     runway_df = pd.DataFrame({
@@ -184,7 +197,7 @@ with col1:
         "Net Burn ($)": net_burn,
         "Cumulative Burn ($)": cumulative_burn
     })
-    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True)
+    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True, height=500)
 
     # Download option
     csv = runway_df.to_csv(index=False).encode('utf-8')
@@ -199,6 +212,10 @@ with col1:
     st.download_button(
         label="📄 Export Summary as PDF",
         data=plain_english.encode('utf-8'),
+        file_name='runway_summary.pdf',
+        mime='application/pdf',
+        key='pdf-download-summary'
+    ),
         file_name='runway_summary.pdf',
         mime='application/pdf'
     )
