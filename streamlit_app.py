@@ -52,9 +52,6 @@ if st.sidebar.button("🔄 Reset Inputs"):
     st.session_state.reset_trigger = True
     st.experimental_rerun()
 
-if st.sidebar.button("🔄 Reset Inputs"):
-    reset_inputs()
-
 # Adjusted values
 adjusted_raise = input_raise_amount
 adjusted_post_money = input_pre_money_valuation + adjusted_raise
