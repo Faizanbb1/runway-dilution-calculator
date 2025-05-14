@@ -1,15 +1,50 @@
 import streamlit as st
 import pandas as pd
+import base64
+
+# Set page config for a modern look
+st.set_page_config(page_title="Runway & Dilution Calculator", layout="wide")
+
+# Custom CSS for styling
+st.markdown("""
+    <style>
+        .main {
+            background-color: #f4f6f8;
+            padding: 2rem;
+        }
+        .sidebar .sidebar-content {
+            background-color: #ffffff;
+        }
+        .stButton>button {
+            border-radius: 8px;
+            border: 1px solid #1f77b4;
+            color: white;
+            background-color: #1f77b4;
+        }
+        .stDownloadButton button {
+            background-color: #2ca02c;
+            color: white;
+            border-radius: 6px;
+        }
+        .summary-box {
+            background-color: white;
+            border-left: 5px solid #1f77b4;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 # Title
-st.title("🚀 Runway & Dilution Calculator")
+st.markdown("<h1 style='color:#1f77b4;'>🚀 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
 # Sidebar inputs with optional prefill
-st.sidebar.header("📊 Inputs")
+st.sidebar.header("📊 Input Parameters")
 current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
 added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
@@ -19,7 +54,7 @@ input_raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.sessio
 input_pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
 bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
-# Load, Save, and Reset buttons at bottom of sidebar
+# Load and Save buttons at bottom of sidebar
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Inputs"):
     st.session_state.loaded = True
@@ -34,7 +69,6 @@ if st.sidebar.button("📥 Load Inputs"):
 
 if st.sidebar.button("💾 Save Changes"):
     st.success("Inputs saved!")
-
 
 # Adjusted values
 adjusted_raise = input_raise_amount
@@ -87,7 +121,7 @@ st.download_button(
 # Summary
 st.subheader("📈 Summary")
 st.markdown(f"""
-<div style='background-color:#f9f9f9; padding:25px 20px; border-radius:12px; border: 1px solid #ddd; font-size:16px;'>
+<div class='summary-box'>
     <p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
     <p><strong>📊 Post-Money Valuation:</strong> ${adjusted_post_money:,.0f}</p>
     <p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
