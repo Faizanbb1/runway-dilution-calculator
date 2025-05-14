@@ -70,14 +70,14 @@ if 'loaded' not in st.session_state:
 
 # Sidebar inputs with onboarding
 with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
-    current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
-    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
-    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
-    runway_months = st.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
-    option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
-    input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
-    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
-    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
+    current_burn = st.number_input("Current Monthly Burn ($)", help="Total monthly cash outflows before new hires",, value=st.session_state.get("current_burn", 0))
+    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", help="Monthly cost increase due to hiring after month 6",, value=st.session_state.get("added_headcount_burn", 0))
+    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month",, value=st.session_state.get("revenue_ramp", 0))
+    runway_months = st.selectbox("Runway Duration (Months)", help="How many months of runway you are planning for",, [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
+    option_pool_percent = st.slider("Option Pool Refresh (%)", help="Equity set aside for new hires post-funding",, 0, 30, st.session_state.get("option_pool_percent", 0))
+    input_raise_amount = st.number_input("Raise Amount ($)", help="The amount of capital you plan to raise",, value=st.session_state.get("raise_amount", 0))
+    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", help="Company valuation before the new capital is added",, value=st.session_state.get("pre_money_valuation", 0))
+    bridge_round = st.checkbox("Include $1M Bridge Round", help="Toggle to simulate an extra $1M in interim funding", value=st.session_state.get("bridge_round", False))
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
