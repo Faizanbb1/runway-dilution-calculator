@@ -215,7 +215,4 @@ with col1:
         file_name='runway_summary.pdf',
         mime='application/pdf',
         key='pdf-download-summary'
-    ),
-        file_name='runway_summary.pdf',
-        mime='application/pdf'
     )
