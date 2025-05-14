@@ -10,14 +10,18 @@ st.markdown("""
     <style>
         html, body, [class*="css"]  {
             font-family: 'Inter', 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #fffaf2 !important;
+            color: #333 !important;
         }
+
         .sidebar .sidebar-content {
-            background-color: #ffffff;
+            background-color: #ffffff !important;
         }
+
         h1, h2, h3 {
-            color: #FF385C;
+            color: #FF385C !important;
         }
+
         .stButton > button {
             background-color: #FF385C;
             color: white;
@@ -27,47 +31,55 @@ st.markdown("""
             font-weight: 600;
             font-size: 16px;
         }
+
         .stDownloadButton button {
             background-color: #008489;
             color: white;
             border-radius: 10px;
             font-weight: 600;
         }
+
         .summary-box {
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
-    font-size: 17px;
-    border-left: 6px solid #FF385C;
-    margin-bottom: 1.5rem;
-    z-index: 1;
-    position: relative;
-}
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
+            font-size: 17px;
+            border-left: 6px solid #FF385C;
+            margin-bottom: 1.5rem;
+            z-index: 1;
+            position: relative;
+            background: linear-gradient(to right, #fffefc, #fdf9f3);
+            color: #333;
+        }
 
-@media (prefers-color-scheme: light) {
-    .summary-box {
-        background: linear-gradient(to right, #fffdfd, #f8f8f8);
-        color: #333;
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    .summary-box {
-        background: linear-gradient(to right, #1e1e1e, #2b2b2b);
-        color: #fafafa;
-        border-left: 6px solid #FF385C;
-    }
-}
         .css-1d391kg input {
             border-radius: 10px;
         }
+
         .stDataFrame {
             background-color: white;
             border-radius: 12px;
             padding: 12px;
         }
+
         .block-container {
             padding: 2rem 2rem 2rem 2rem;
+        }
+
+        /* Force light theme even in dark mode OS */
+        @media (prefers-color-scheme: dark) {
+            html, body, [class*="css"] {
+                background-color: #fffaf2 !important;
+                color: #333 !important;
+            }
+            .sidebar .sidebar-content {
+                background-color: #ffffff !important;
+            }
+            .summary-box {
+                background: linear-gradient(to right, #fffefc, #fdf9f3) !important;
+                color: #333 !important;
+                border-left: 6px solid #FF385C !important;
+            }
         }
     </style>
 """, unsafe_allow_html=True)
