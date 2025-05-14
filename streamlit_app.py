@@ -150,20 +150,15 @@ elif 12 <= runway_end_month < 20:
 else:
     runway_color = '🔴 Risky'
 
-plain_english = (
-    "### Summary Insights:
+plain_english = f"""
+### Summary Insights:
 
-"
-    f"- You are planning to raise **${input_raise_amount:,.0f}** "
-    f"on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
-"
-    f"- This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
-"
-    f"- Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
-"
-    f"- **Runway Status:** {runway_color}
-"
-    f"- **Financial Health Score:** {health_score:.0f}/100"
+- You are planning to raise **${input_raise_amount:,.0f}** on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
+- This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
+- Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
+- **Runway Status:** {runway_color}
+- **Financial Health Score:** {health_score:.0f}/100
+"""** {health_score:.0f}/100"
 )
 
 col1, col2 = st.columns([2, 1])
