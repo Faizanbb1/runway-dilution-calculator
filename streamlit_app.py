@@ -44,7 +44,6 @@ if st.sidebar.button("🔄 Reset Inputs"):
     st.session_state.raise_amount = 0
     st.session_state.pre_money_valuation = 0
     st.session_state.bridge_round = False
-    st.success("Inputs have been reset.")
     st.experimental_rerun()
 
 # Adjusted values
