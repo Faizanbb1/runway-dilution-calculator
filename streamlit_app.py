@@ -129,7 +129,8 @@ months = list(range(1, runway_months + 1))
 burn = [current_burn + (added_headcount_burn if m >= 6 else 0) for m in months]
 revenue = [revenue_ramp * m for m in months]
 net_burn = [b - r for b, r in zip(burn, revenue)]
-cumulative_burn = pd.Series(net_burn).cumsum()
+cumulative_burn_series = pd.Series(net_burn).cumsum()
+cumulative_burn = cumulative_burn_series.tolist()
 
 # Capital exhaustion point
 runway_end_month = (
@@ -207,8 +208,8 @@ with col1:
     import altair as alt
     chart_data = pd.DataFrame({
         "Month": months,
-        "Cumulative Burn": cumulative_burn.astype(float),
-        "Capital Raised": [float(adjusted_raise)] * len(cumulative_burn)
+        "Cumulative Burn": cumulative_burn,
+        "Capital Raised": [float(adjusted_raise)] * len(months)
     })
 
     base = alt.Chart(chart_data).transform_fold(
