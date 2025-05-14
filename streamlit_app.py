@@ -83,10 +83,10 @@ st.download_button(
 # Summary
 st.subheader("📈 Summary")
 st.markdown(f"""
-<div style='background-color:#f0f2f6; padding:20px; border-radius:10px;'>
-    <h4 style='color:#1f77b4;'>💰 Adjusted Raise Amount:</h4> <b>${raise_amount:,.0f}</b><br><br>
-    <h4 style='color:#ff7f0e;'>📊 Post-Money Valuation:</h4> <b>${post_money_valuation:,.0f}</b><br><br>
-    <h4 style='color:#2ca02c;'>📉 Ownership Sold:</h4> <b>{ownership_sold * 100:.2f}%</b><br><br>
-    <h4 style='color:#d62728;'>⏳ Capital Runs Out In:</h4> <b>Month {runway_end_month}</b>
+<div style='background-color:#f9f9f9; padding:25px 20px; border-radius:12px; border: 1px solid #ddd; font-size:16px;'>
+    <p><strong>💰 Adjusted Raise Amount:</strong> ${raise_amount:,.0f}</p>
+    <p><strong>📊 Post-Money Valuation:</strong> ${post_money_valuation:,.0f}</p>
+    <p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
+    <p><strong>⏳ Capital Runs Out In:</strong> Month {runway_end_month}</p>
 </div>
 """, unsafe_allow_html=True)
