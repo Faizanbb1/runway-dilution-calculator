@@ -39,6 +39,7 @@ st.markdown("""
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
     font-size: 17px;
     border-left: 6px solid #FF385C;
+    margin-bottom: 1.5rem;
     z-index: 1;
     position: relative;
 }
@@ -147,9 +148,10 @@ else:
 
 plain_english = f"""
 **Summary Insights:**
+
 - You are planning to raise **${input_raise_amount:,.0f}** on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
 - This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
-- With your burn and revenue profile, you will have **{runway_end_month} months** of runway.
+- Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
 - **Runway Status:** {runway_color}
 - **Financial Health Score:** {health_score:.0f}/100
 """
