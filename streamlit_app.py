@@ -39,6 +39,8 @@ st.markdown("""
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
     font-size: 17px;
     border-left: 6px solid #FF385C;
+    z-index: 1;
+    position: relative;
 }
 
 @media (prefers-color-scheme: light) {
