@@ -62,7 +62,7 @@ st.markdown("""
     💡 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
     Your summary and projections will appear instantly below.</em>
 </p>
-"""), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
@@ -70,7 +70,14 @@ if 'loaded' not in st.session_state:
 
 # Sidebar inputs with onboarding
 with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
-current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
+    current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
+    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
+    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
+    runway_months = st.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
+    option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
+    input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
+    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
+    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
 added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
 runway_months = st.sidebar.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
@@ -118,19 +125,7 @@ runway_end_month = (
     else runway_months
 )
 
-# Table
-st.subheader("📅 Runway Breakdown")
-runway_df = pd.DataFrame({
-    "Month": months,
-    "Burn ($)": burn,
-    "Revenue ($)": revenue,
-    "Net Burn ($)": net_burn,
-    "Cumulative Burn ($)": cumulative_burn
-})
-st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True)
-
-# Download option
-csv = runway_df.to_csv(index=False).encode('utf-8')
+.encode('utf-8')
 st.download_button(
     label="⬇️ Download CSV",
     data=csv,
