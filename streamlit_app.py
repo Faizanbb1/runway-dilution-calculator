@@ -153,11 +153,12 @@ else:
 plain_english = f"""
 ### Summary Insights:
 
-- You are planning to raise **${input_raise_amount:,.0f}** on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
+- You are planning to raise **${input_raise_amount:,.0f}**  
+  on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
 - This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
 - Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
 - **Runway Status:** {runway_color}
-- **Financial Health Score:** {health_score:.0f}/100
+- **Financial Health Score:**** {health_score:.0f}/100
 """
 
 col1, col2 = st.columns([2, 1])
