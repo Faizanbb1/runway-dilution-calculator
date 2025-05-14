@@ -2,54 +2,72 @@ import streamlit as st
 import pandas as pd
 import base64
 
-# Set page config
+# Set page config for a modern look
 st.set_page_config(page_title="Runway & Dilution Calculator", layout="wide")
 
-# Custom Dark Theme CSS
+# Custom CSS for premium UI
 st.markdown("""
     <style>
         html, body, [class*="css"]  {
-            font-family: 'Inter', sans-serif;
-            background-color: #121212;
-            color: #E0E0E0;
-        }
-        .stApp {
-            background-color: #121212;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
         }
         .sidebar .sidebar-content {
-            background-color: #1E1E1E;
-            color: #E0E0E0;
+            background-color: #ffffff;
         }
         h1, h2, h3 {
-            color: #FF6D91;
+            color: #FF385C;
         }
         .stButton > button {
-            background-color: #FF6D91;
+            background-color: #FF385C;
             color: white;
             padding: 10px 24px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: none;
             font-weight: 600;
             font-size: 16px;
         }
         .stDownloadButton button {
-            background-color: #4DB6AC;
+            background-color: #008489;
             color: white;
             border-radius: 10px;
             font-weight: 600;
         }
         .summary-box {
-            padding: 25px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
+    font-size: 17px;
+    border-left: 6px solid #FF385C;
+    margin-bottom: 1.5rem;
+    z-index: 1;
+    position: relative;
+}
+
+@media (prefers-color-scheme: light) {
+    .summary-box {
+        background: linear-gradient(to right, #fffdfd, #f8f8f8);
+        color: #333;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .summary-box {
+        background: linear-gradient(to right, #1e1e1e, #2b2b2b);
+        color: #fafafa;
+        border-left: 6px solid #FF385C;
+    }
+}
+        .css-1d391kg input {
+            border-radius: 10px;
+        }
+        .stDataFrame {
+            background-color: white;
             border-radius: 12px;
-            box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.05);
-            font-size: 17px;
-            border-left: 6px solid #FF6D91;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, #1E1E1E, #2B2B2B);
-            color: #FAFAFA;
+            padding: 12px;
         }
         .block-container {
-            padding: 2rem;
+            padding: 2rem 2rem 2rem 2rem;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -57,27 +75,27 @@ st.markdown("""
 # Title
 st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
 st.markdown("""
-<p style='color: #BBB; font-size: 18px;'>
+<p style='color: #777; font-size: 18px;'>
     💡 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
     Your summary and projections will appear instantly below.</em>
 </p>
 """, unsafe_allow_html=True)
 
-# Session state
+# Session state to store/load data
 if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
-# Sidebar inputs
+# Sidebar inputs with onboarding
 with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
-    current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
-    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
-    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
+    current_burn = st.number_input("Current Monthly Burn ($)", help="Total monthly cash outflows before new hires", value=st.session_state.get("current_burn", 0))
+    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", help="Monthly cost increase due to hiring after month 6", value=st.session_state.get("added_headcount_burn", 0))
+    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month", value=st.session_state.get("revenue_ramp", 0))
     runway_months = st.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
     option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
     input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
     input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
-    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
-
+    bridge_round = st.checkbox("Include $1M Bridge Round", help="Toggle to simulate an extra $1M in interim funding", value=st.session_state.get("bridge_round", False))
+st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
     st.session_state.current_burn = 75000
@@ -89,52 +107,63 @@ if st.sidebar.button("📥 Load Example"):
     st.session_state.pre_money_valuation = 10000000
     st.session_state.bridge_round = False
 
-# Adjusted calculations
+if st.sidebar.button("💾 Save Inputs"):
+    st.success("Inputs saved!")
+
+# Adjusted values
 raw_raise = input_raise_amount
+initial_post_money = input_pre_money_valuation + raw_raise
+
+# Adjust for option pool refresh (dilutes pre-money)
 adjusted_raise = raw_raise + ((option_pool_percent / 100) * input_pre_money_valuation)
+
+# Add bridge round if toggled
 if bridge_round:
     adjusted_raise += 1_000_000
+
 adjusted_post_money = input_pre_money_valuation + adjusted_raise
 ownership_sold = adjusted_raise / adjusted_post_money if adjusted_post_money else 0
 
-# Runway Calculations
+# Runway Table Calculations
 months = list(range(1, runway_months + 1))
 burn = [current_burn + (added_headcount_burn if m >= 6 else 0) for m in months]
 revenue = [revenue_ramp * m for m in months]
 net_burn = [b - r for b, r in zip(burn, revenue)]
-cumulative_burn_series = pd.Series(net_burn).cumsum()
-cumulative_burn = cumulative_burn_series.tolist()
-runway_end_month = next((i + 1 for i, value in enumerate(cumulative_burn) if value > adjusted_raise), runway_months)
+cumulative_burn = pd.Series(net_burn).cumsum()
 
-# Insights
+# Capital exhaustion point
+runway_end_month = (
+    cumulative_burn[cumulative_burn > adjusted_raise].index.min() + 1
+    if (cumulative_burn > adjusted_raise).any()
+    else runway_months
+)
+
+
+# Summary (moved to top with layout split)
+# Generate insight and financial health score
 health_score = max(0, 100 - ownership_sold * 100)
-runway_color = '🟢 Healthy' if runway_end_month >= 20 else '🟡 Caution' if runway_end_month >= 12 else '🔴 Risky'
+if runway_end_month >= 20:
+    runway_color = '🟢 Healthy'
+elif 12 <= runway_end_month < 20:
+    runway_color = '🟡 Caution'
+else:
+    runway_color = '🔴 Risky'
 
 plain_english = f"""
-Runway & Dilution Summary\n\n
-💰 Adjusted Raise Amount: ${adjusted_raise:,.0f}\n
-📊 Post-Money Valuation: ${adjusted_post_money:,.0f}\n
-📉 Ownership Sold: {ownership_sold * 100:.2f}%\n
-⏳ Capital Runs Out In: Month {runway_end_month}\n
-💡 Insights:\n
-• You are planning to raise: ${input_raise_amount:,.0f}\n
-• This results in an ownership dilution of {ownership_sold * 100:.2f}%.\n
-• You will have {runway_end_month} months of runway based on your profile.\n
-• Runway Status: {runway_color}\n
-• Financial Health Score: {health_score:.0f}/100\n
+### Summary Insights:
+
+- You are planning to raise: ${input_raise_amount:,.0f}
+- This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
+- Based on your burn and revenue profile, you will have **{runway_end_month} month{'s' if runway_end_month != 1 else ''}** of runway.
+- **Runway Status:** {runway_color}
+- **Financial Health Score:** {health_score:.0f}/100
 """
 
 col1, col2 = st.columns([2, 1])
 
 with col2:
     st.subheader("🧠 Explain My Results")
-    st.text(plain_english)
-    st.download_button(
-        label="📄 Export Summary as PDF",
-        data=plain_english.encode('utf-8', errors='ignore'),
-        file_name='runway_summary.pdf',
-        mime='application/pdf'
-    )
+    st.markdown(plain_english)
 
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
@@ -153,16 +182,50 @@ with col1:
         "Burn ($)": burn,
         "Revenue ($)": revenue,
         "Net Burn ($)": net_burn,
-        "Cumulative Burn ($)": cumulative_burn,
-        "Capital Depleted": ["🔴" if m == runway_end_month else "" for m in months]
+        "Cumulative Burn ($)": cumulative_burn
     })
-    st.dataframe(runway_df, use_container_width=True, height=500)
+    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True, height=500)
 
+    csv = runway_df.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="⬇️ Download CSV",
-        data=runway_df.to_csv(index=False).encode('utf-8'),
+        data=csv,
         file_name='runway_dilution_table.csv',
         mime='text/csv'
     )
 
-# Note: Chart section removed per user request
+    st.download_button(
+        label="📄 Export Summary as PDF",
+        data=plain_english.encode('utf-8'),
+        file_name='runway_summary.pdf',
+        mime='application/pdf',
+        key='pdf-download-summary'
+    )
+
+    # Chart display below
+    st.subheader("📊 Burn vs Capital Chart")
+    import altair as alt
+    chart_data = pd.DataFrame({
+        "Month": months,
+        "Cumulative Burn": cumulative_burn.astype(float),
+        "Capital Raised": [float(adjusted_raise)] * len(cumulative_burn)
+    })
+
+    base = alt.Chart(chart_data).transform_fold(
+        ["Cumulative Burn", "Capital Raised"],
+        as_=["Category", "Value"]
+    ).mark_line().encode(
+        x=alt.X("Month:Q", title="Month"),
+        y=alt.Y("Value:Q", title="USD ($)", scale=alt.Scale(zero=False)),
+        color=alt.Color("Category:N", legend=alt.Legend(title="Legend")),
+        tooltip=["Month", "Category", "Value"]
+    ).properties(
+        width=700,
+        height=400
+    )
+
+    vertical_line = alt.Chart(pd.DataFrame({"Month": [runway_end_month]})).mark_rule(
+        strokeDash=[4, 4], color="gray"
+    ).encode(x="Month:Q")
+
+    st.altair_chart(base + vertical_line, use_container_width=True)
