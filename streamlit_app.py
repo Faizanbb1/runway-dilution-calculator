@@ -34,13 +34,27 @@ st.markdown("""
             font-weight: 600;
         }
         .summary-box {
-            background: linear-gradient(to right, #fffdfd, #f8f8f8);
-            border-left: 6px solid #FF385C;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
-            font-size: 17px;
-        }
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.05);
+    font-size: 17px;
+    border-left: 6px solid #FF385C;
+}
+
+@media (prefers-color-scheme: light) {
+    .summary-box {
+        background: linear-gradient(to right, #fffdfd, #f8f8f8);
+        color: #333;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .summary-box {
+        background: linear-gradient(to right, #1e1e1e, #2b2b2b);
+        color: #fafafa;
+        border-left: 6px solid #FF385C;
+    }
+}
         .css-1d391kg input {
             border-radius: 10px;
         }
@@ -70,14 +84,14 @@ if 'loaded' not in st.session_state:
 
 # Sidebar inputs with onboarding
 with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
-    current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
-    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
-    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
-    runway_months = st.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
-    option_pool_percent = st.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
-    input_raise_amount = st.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
-    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
-    bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
+    current_burn = st.number_input("Current Monthly Burn ($)", help="Total monthly cash outflows before new hires", value=st.session_state.get("current_burn", 0))
+    added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", help="Monthly cost increase due to hiring after month 6", value=st.session_state.get("added_headcount_burn", 0))
+    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month", value=st.session_state.get("revenue_ramp", 0))
+    runway_months = st.selectbox("Runway Duration (Months)", help="How many months of runway you are planning for", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
+    option_pool_percent = st.slider("Option Pool Refresh (%)", help="Equity set aside for new hires post-funding",, 0, 30, st.session_state.get("option_pool_percent", 0))
+    input_raise_amount = st.number_input("Raise Amount ($)", help="The amount of capital you plan to raise",, value=st.session_state.get("raise_amount", 0))
+    input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", help="Company valuation before the new capital is added",, value=st.session_state.get("pre_money_valuation", 0))
+    bridge_round = st.checkbox("Include $1M Bridge Round", help="Toggle to simulate an extra $1M in interim funding", value=st.session_state.get("bridge_round", False))
 st.sidebar.markdown("---")
 if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
@@ -120,9 +134,30 @@ runway_end_month = (
 
 
 # Summary (moved to top with layout split)
+# Generate insight and financial health score
+health_score = max(0, 100 - ownership_sold * 100)
+if runway_end_month >= 20:
+    runway_color = '🟢 Healthy'
+elif 12 <= runway_end_month < 20:
+    runway_color = '🟡 Caution'
+else:
+    runway_color = '🔴 Risky'
+
+plain_english = f"""
+**Summary Insights:**
+- You are planning to raise **${input_raise_amount:,.0f}** on a pre-money valuation of **${input_pre_money_valuation:,.0f}**.
+- This results in an **ownership dilution of {ownership_sold * 100:.2f}%**.
+- With your burn and revenue profile, you will have **{runway_end_month} months** of runway.
+- **Runway Status:** {runway_color}
+- **Financial Health Score:** {health_score:.0f}/100
+"""
+
 col1, col2 = st.columns([2, 1])
 
 with col2:
+    st.subheader("🧠 Explain My Results")
+    st.markdown(plain_english)
+
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
     <div class='summary-box'>
