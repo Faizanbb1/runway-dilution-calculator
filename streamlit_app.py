@@ -138,14 +138,6 @@ runway_end_month = (
     else runway_months
 )
 
-# Chart display below
-st.subheader("📊 Burn vs Capital Chart")
-chart_data = pd.DataFrame({
-    "Cumulative Burn": cumulative_burn,
-    "Capital Raised": [adjusted_raise] * len(cumulative_burn)
-}, index=months)
-
-st.line_chart(chart_data)
 
 # Summary (moved to top with layout split)
 # Generate insight and financial health score
@@ -209,3 +201,11 @@ with col1:
         mime='application/pdf',
         key='pdf-download-summary'
     )
+
+    # Chart display below
+    st.subheader("📊 Burn vs Capital Chart")
+    chart_data = pd.DataFrame({
+        "Cumulative Burn": cumulative_burn,
+        "Capital Raised": [adjusted_raise] * len(cumulative_burn)
+    }, index=months)
+    st.line_chart(chart_data)
