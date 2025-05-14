@@ -164,11 +164,7 @@ col1, col2 = st.columns([2, 1])
 
 with col2:
     st.subheader("🧠 Explain My Results")
-    st.markdown(f"""
-<div style='overflow-wrap: break-word; word-break: break-word; white-space: normal;'>
-{plain_english}
-</div>
-""", unsafe_allow_html=True)
+    st.markdown(plain_english)
 
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
