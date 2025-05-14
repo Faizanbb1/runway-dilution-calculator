@@ -4,28 +4,47 @@ import pandas as pd
 # Title
 st.title("Runway & Dilution Calculator")
 
-# Sidebar inputs
+# Session state to store/load data
+if 'loaded' not in st.session_state:
+    st.session_state.loaded = False
+
+# Load and Save buttons
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Load Inputs"):
+        st.session_state.loaded = True
+        st.session_state.current_burn = 75000
+        st.session_state.added_headcount_burn = 30000
+        st.session_state.revenue_ramp = 10000
+        st.session_state.runway_months = 24
+        st.session_state.option_pool_percent = 10
+        st.session_state.raise_amount = 3000000
+        st.session_state.pre_money_valuation = 10000000
+        st.session_state.bridge_round = False
+
+with col2:
+    if st.button("Save Changes"):
+        st.success("Inputs saved!")
+
+# Sidebar inputs with optional prefill
 st.sidebar.header("Inputs")
-current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=75000)
-added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=30000)
-revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=10000)
-runway_months = st.sidebar.selectbox("Runway Duration (Months)", [18, 24], index=1)
-option_pool_percent = st.sidebar.slider("Option Pool Refresh (%)", 0, 30, 10)
-raise_amount = st.sidebar.number_input("Raise Amount ($)", value=3_000_000)
-pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=10_000_000)
-bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=False)
+current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
+added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
+revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
+runway_months = st.sidebar.selectbox("Runway Duration (Months)", [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
+option_pool_percent = st.sidebar.slider("Option Pool Refresh (%)", 0, 30, st.session_state.get("option_pool_percent", 0))
+raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.session_state.get("raise_amount", 0))
+pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
+bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
 # Option Pool and Bridge Round Adjustments
 post_money_valuation = pre_money_valuation + raise_amount
-
 if option_pool_percent:
     raise_amount += (option_pool_percent / 100) * post_money_valuation
-
 if bridge_round:
     raise_amount += 1_000_000
-
 post_money_valuation = pre_money_valuation + raise_amount
-ownership_sold = raise_amount / post_money_valuation
+ownership_sold = raise_amount / post_money_valuation if post_money_valuation else 0
 
 # Runway Table Calculations
 months = list(range(1, runway_months + 1))
