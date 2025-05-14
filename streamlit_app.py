@@ -133,11 +133,7 @@ cumulative_burn_series = pd.Series(net_burn).cumsum()
 cumulative_burn = cumulative_burn_series.tolist()
 
 # Capital exhaustion point
-runway_end_month = (
-    cumulative_burn[cumulative_burn > adjusted_raise].index.min() + 1
-    if (cumulative_burn > adjusted_raise).any()
-    else runway_months
-)
+runway_end_month = next((i + 1 for i, value in enumerate(cumulative_burn) if value > adjusted_raise), runway_months)
 
 
 # Summary (moved to top with layout split)
