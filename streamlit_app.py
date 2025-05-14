@@ -138,9 +138,7 @@ runway_end_month = (
     else runway_months
 )
 
-
-# Summary (moved to top with layout split)
-# Generate insight and financial health score
+# Summary insights
 health_score = max(0, 100 - ownership_sold * 100)
 if runway_end_month >= 20:
     runway_color = '🟢 Healthy'
@@ -201,31 +199,3 @@ with col1:
         mime='application/pdf',
         key='pdf-download-summary'
     )
-
-    # Chart display below
-    st.subheader("📊 Burn vs Capital Chart")
-    import altair as alt
-    chart_data = pd.DataFrame({
-        "Month": months,
-        "Cumulative Burn": cumulative_burn.astype(float),
-        "Capital Raised": [float(adjusted_raise)] * len(cumulative_burn)
-    })
-
-    base = alt.Chart(chart_data).transform_fold(
-        ["Cumulative Burn", "Capital Raised"],
-        as_=["Category", "Value"]
-    ).mark_line().encode(
-        x=alt.X("Month:Q", title="Month"),
-        y=alt.Y("Value:Q", title="USD ($)", scale=alt.Scale(zero=False)),
-        color=alt.Color("Category:N", legend=alt.Legend(title="Legend")),
-        tooltip=["Month", "Category", "Value"]
-    ).properties(
-        width=700,
-        height=400
-    )
-
-    vertical_line = alt.Chart(pd.DataFrame({"Month": [runway_end_month]})).mark_rule(
-        strokeDash=[4, 4], color="gray"
-    ).encode(x="Month:Q")
-
-    st.altair_chart(base + vertical_line, use_container_width=True)
