@@ -5,46 +5,57 @@ import base64
 # Set page config for a modern look
 st.set_page_config(page_title="Runway & Dilution Calculator", layout="wide")
 
-# Custom CSS for styling
+# Custom CSS for premium UI
 st.markdown("""
     <style>
-        .main {
-            background-color: #f4f6f8;
-            padding: 2rem;
+        html, body, [class*="css"]  {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f6;
         }
         .sidebar .sidebar-content {
             background-color: #ffffff;
         }
-        .stButton>button {
-            border-radius: 8px;
-            border: 1px solid #1f77b4;
+        h1, h2, h3 {
+            color: #003262;
+        }
+        .stButton > button {
+            background-color: #0056d2;
             color: white;
-            background-color: #1f77b4;
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
         }
         .stDownloadButton button {
-            background-color: #2ca02c;
+            background-color: #28a745;
             color: white;
-            border-radius: 6px;
+            border-radius: 8px;
+            font-weight: 600;
         }
         .summary-box {
-            background-color: white;
-            border-left: 5px solid #1f77b4;
-            padding: 20px;
+            background: linear-gradient(to right, #ffffff, #f9f9f9);
+            border-left: 6px solid #0056d2;
+            padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.06);
+            font-size: 17px;
+        }
+        .css-1d391kg input {
+            border-radius: 6px;
         }
     </style>
 """, unsafe_allow_html=True)
 
 # Title
-st.markdown("<h1 style='color:#1f77b4;'>🚀 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
+st.markdown("<p style='color: #555;'>Model your startup financing strategy with clarity and confidence.</p>", unsafe_allow_html=True)
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
-# Sidebar inputs with optional prefill
-st.sidebar.header("📊 Input Parameters")
+# Sidebar inputs
+st.sidebar.header("🛠️ Configure Your Inputs")
 current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
 added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
@@ -54,9 +65,8 @@ input_raise_amount = st.sidebar.number_input("Raise Amount ($)", value=st.sessio
 input_pre_money_valuation = st.sidebar.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
 bridge_round = st.sidebar.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
-# Load and Save buttons at bottom of sidebar
 st.sidebar.markdown("---")
-if st.sidebar.button("📥 Load Inputs"):
+if st.sidebar.button("📥 Load Example"):
     st.session_state.loaded = True
     st.session_state.current_burn = 75000
     st.session_state.added_headcount_burn = 30000
@@ -67,18 +77,16 @@ if st.sidebar.button("📥 Load Inputs"):
     st.session_state.pre_money_valuation = 10000000
     st.session_state.bridge_round = False
 
-if st.sidebar.button("💾 Save Changes"):
+if st.sidebar.button("💾 Save Inputs"):
     st.success("Inputs saved!")
 
 # Adjusted values
 adjusted_raise = input_raise_amount
 adjusted_post_money = input_pre_money_valuation + adjusted_raise
-
 if option_pool_percent:
     adjusted_raise += (option_pool_percent / 100) * adjusted_post_money
 if bridge_round:
     adjusted_raise += 1_000_000
-
 adjusted_post_money = input_pre_money_valuation + adjusted_raise
 ownership_sold = adjusted_raise / adjusted_post_money if adjusted_post_money else 0
 
@@ -96,7 +104,8 @@ runway_end_month = (
     else runway_months
 )
 
-# Create DataFrame
+# Table
+st.subheader("📅 Runway Breakdown")
 runway_df = pd.DataFrame({
     "Month": months,
     "Burn ($)": burn,
@@ -104,22 +113,19 @@ runway_df = pd.DataFrame({
     "Net Burn ($)": net_burn,
     "Cumulative Burn ($)": cumulative_burn
 })
-
-# Display table
-st.subheader("📉 Runway Table")
-st.dataframe(runway_df.style.format("${:,.0f}"))
+st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True)
 
 # Download option
 csv = runway_df.to_csv(index=False).encode('utf-8')
 st.download_button(
-    label="📥 Download Table as Excel (CSV)",
+    label="⬇️ Download CSV",
     data=csv,
     file_name='runway_dilution_table.csv',
     mime='text/csv'
 )
 
 # Summary
-st.subheader("📈 Summary")
+st.subheader("📈 Financial Summary")
 st.markdown(f"""
 <div class='summary-box'>
     <p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
