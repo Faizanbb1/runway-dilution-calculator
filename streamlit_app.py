@@ -111,12 +111,16 @@ if st.sidebar.button("💾 Save Inputs"):
     st.success("Inputs saved!")
 
 # Adjusted values
-adjusted_raise = input_raise_amount
-adjusted_post_money = input_pre_money_valuation + adjusted_raise
-if option_pool_percent:
-    adjusted_raise += (option_pool_percent / 100) * adjusted_post_money
+raw_raise = input_raise_amount
+initial_post_money = input_pre_money_valuation + raw_raise
+
+# Adjust for option pool refresh (dilutes pre-money)
+adjusted_raise = raw_raise + ((option_pool_percent / 100) * input_pre_money_valuation)
+
+# Add bridge round if toggled
 if bridge_round:
     adjusted_raise += 1_000_000
+
 adjusted_post_money = input_pre_money_valuation + adjusted_raise
 ownership_sold = adjusted_raise / adjusted_post_money if adjusted_post_money else 0
 
