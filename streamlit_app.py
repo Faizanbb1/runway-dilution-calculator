@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import base64
-from weasyprint import HTML
 import altair as alt
 
 # Set page config
@@ -47,10 +46,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title
-st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='margin-bottom: 0.5rem;'>\ud83d\udcca Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
 st.markdown("""
 <p style='color: #777; font-size: 18px;'>
-    💡 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
+    \ud83d\udca1 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
     Your summary and projections will appear instantly below.</em>
 </p>
 """, unsafe_allow_html=True)
@@ -60,7 +59,7 @@ if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
 # Sidebar inputs
-with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
+with st.sidebar.expander("\ud83d\udee0\ufe0f Configure Your Inputs", expanded=True):
     current_burn = st.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
     added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
     revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
@@ -70,7 +69,7 @@ with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
     input_pre_money_valuation = st.number_input("Pre-Money Valuation ($)", value=st.session_state.get("pre_money_valuation", 0))
     bridge_round = st.checkbox("Include $1M Bridge Round", value=st.session_state.get("bridge_round", False))
 
-if st.sidebar.button("📅 Load Example"):
+if st.sidebar.button("\ud83d\udcc5 Load Example"):
     st.session_state.loaded = True
     st.session_state.current_burn = 75000
     st.session_state.added_headcount_burn = 30000
@@ -104,31 +103,30 @@ health_score = max(0, 100 - ownership_sold * 100)
 runway_color = '🟢 Healthy' if runway_end_month >= 20 else '🟡 Caution' if runway_end_month >= 12 else '🔴 Risky'
 
 plain_english = f"""
-<h1>Runway & Dilution Summary</h1>
-<p><strong>💰 Adjusted Raise Amount:</strong> ${adjusted_raise:,.0f}</p>
-<p><strong>📊 Post-Money Valuation:</strong> ${adjusted_post_money:,.0f}</p>
-<p><strong>📉 Ownership Sold:</strong> {ownership_sold * 100:.2f}%</p>
-<p><strong>⏳ Capital Runs Out In:</strong> Month {runway_end_month}</p>
-<p><strong>💡 Insights:</strong></p>
-<ul>
-    <li>You are planning to raise: ${input_raise_amount:,.0f}</li>
-    <li>This results in an <strong>ownership dilution of {ownership_sold * 100:.2f}%</strong>.</li>
-    <li>You will have <strong>{runway_end_month} months</strong> of runway based on your profile.</li>
-    <li><strong>Runway Status:</strong> {runway_color}</li>
-    <li><strong>Financial Health Score:</strong> {health_score:.0f}/100</li>
-</ul>
+Runway & Dilution Summary\n\n
+💰 Adjusted Raise Amount: ${adjusted_raise:,.0f}\n
+📊 Post-Money Valuation: ${adjusted_post_money:,.0f}\n
+📉 Ownership Sold: {ownership_sold * 100:.2f}%\n
+⏳ Capital Runs Out In: Month {runway_end_month}\n
+💡 Insights:\n
+• You are planning to raise: ${input_raise_amount:,.0f}\n
+• This results in an ownership dilution of {ownership_sold * 100:.2f}%.\n
+• You will have {runway_end_month} months of runway based on your profile.\n
+• Runway Status: {runway_color}\n
+• Financial Health Score: {health_score:.0f}/100\n
 """
-
-# Summary PDF generation
-pdf_path = "/mnt/data/runway_dilution_summary.pdf"
-HTML(string=plain_english).write_pdf(pdf_path)
 
 col1, col2 = st.columns([2, 1])
 
 with col2:
     st.subheader("🧠 Explain My Results")
-    st.markdown(plain_english, unsafe_allow_html=True)
-    st.download_button("📄 Export Summary as PDF", data=open(pdf_path, "rb").read(), file_name="runway_summary.pdf", mime="application/pdf")
+    st.text(plain_english)
+    st.download_button(
+        label="📄 Export Summary as PDF",
+        data=plain_english.encode('utf-8'),
+        file_name='runway_summary.pdf',
+        mime='application/pdf'
+    )
 
     st.subheader("📈 Financial Summary")
     st.markdown(f"""
