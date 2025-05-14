@@ -48,12 +48,6 @@ st.markdown("""
             background: linear-gradient(to right, #1E1E1E, #2B2B2B);
             color: #FAFAFA;
         }
-        .stDataFrame {
-            background-color: #1E1E1E;
-            color: #FAFAFA;
-            border-radius: 12px;
-            padding: 12px;
-        }
         .block-container {
             padding: 2rem;
         }
@@ -162,7 +156,7 @@ with col1:
         "Cumulative Burn ($)": cumulative_burn,
         "Capital Depleted": ["🔴" if m == runway_end_month else "" for m in months]
     })
-    st.dataframe(runway_df.style.format("${:,.0f}"), use_container_width=True, height=500)
+    st.dataframe(runway_df, use_container_width=True, height=500)
 
     st.download_button(
         label="⬇️ Download CSV",
