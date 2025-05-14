@@ -204,8 +204,28 @@ with col1:
 
     # Chart display below
     st.subheader("📊 Burn vs Capital Chart")
+    import altair as alt
     chart_data = pd.DataFrame({
+        "Month": months,
         "Cumulative Burn": cumulative_burn,
         "Capital Raised": [adjusted_raise] * len(cumulative_burn)
-    }, index=months)
-    st.line_chart(chart_data)
+    })
+
+    base = alt.Chart(chart_data).transform_fold(
+        ["Cumulative Burn", "Capital Raised"],
+        as_=["Category", "Value"]
+    ).mark_line().encode(
+        x=alt.X("Month:Q", title="Month"),
+        y=alt.Y("Value:Q", title="USD ($)", scale=alt.Scale(zero=False)),
+        color=alt.Color("Category:N", legend=alt.Legend(title="Legend")),
+        tooltip=["Month", "Category", "Value"]
+    ).properties(
+        width=700,
+        height=400
+    )
+
+    vertical_line = alt.Chart(pd.DataFrame({"x": [runway_end_month]})).mark_rule(
+        strokeDash=[4, 4], color="gray"
+    ).encode(x="x:Q")
+
+    st.altair_chart(base + vertical_line, use_container_width=True)
