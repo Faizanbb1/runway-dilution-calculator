@@ -72,7 +72,7 @@ if 'loaded' not in st.session_state:
 with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
     current_burn = st.number_input("Current Monthly Burn ($)", help="Total monthly cash outflows before new hires", value=st.session_state.get("current_burn", 0))
     added_headcount_burn = st.number_input("Headcount Added from Month 6 ($)", help="Monthly cost increase due to hiring after month 6", value=st.session_state.get("added_headcount_burn", 0))
-    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month",, value=st.session_state.get("revenue_ramp", 0))
+    revenue_ramp = st.number_input("Expected Monthly Revenue Ramp ($)", help="Expected revenue increase per month", value=st.session_state.get("revenue_ramp", 0))
     runway_months = st.selectbox("Runway Duration (Months)", help="How many months of runway you are planning for",, [18, 24], index=1 if st.session_state.get("runway_months", 24) == 24 else 0)
     option_pool_percent = st.slider("Option Pool Refresh (%)", help="Equity set aside for new hires post-funding",, 0, 30, st.session_state.get("option_pool_percent", 0))
     input_raise_amount = st.number_input("Raise Amount ($)", help="The amount of capital you plan to raise",, value=st.session_state.get("raise_amount", 0))
