@@ -57,14 +57,19 @@ st.markdown("""
 
 # Title
 st.markdown("<h1 style='margin-bottom: 0.5rem;'>📊 Runway & Dilution Calculator</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color: #777; font-size: 18px;'>Plan your raise. Predict your runway. Protect your equity.</p>", unsafe_allow_html=True)
+st.markdown("""
+<p style='color: #777; font-size: 18px;'>
+    💡 <em>Use the sidebar to input your burn, raise and valuation assumptions.<br>
+    Your summary and projections will appear instantly below.</em>
+</p>
+"""), unsafe_allow_html=True)
 
 # Session state to store/load data
 if 'loaded' not in st.session_state:
     st.session_state.loaded = False
 
-# Sidebar inputs
-st.sidebar.header("🛠️ Configure Your Inputs")
+# Sidebar inputs with onboarding
+with st.sidebar.expander("🛠️ Configure Your Inputs", expanded=True):
 current_burn = st.sidebar.number_input("Current Monthly Burn ($)", value=st.session_state.get("current_burn", 0))
 added_headcount_burn = st.sidebar.number_input("Headcount Added from Month 6 ($)", value=st.session_state.get("added_headcount_burn", 0))
 revenue_ramp = st.sidebar.number_input("Expected Monthly Revenue Ramp ($)", value=st.session_state.get("revenue_ramp", 0))
