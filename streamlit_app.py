@@ -174,19 +174,7 @@ with col2:
     </div>
     """, unsafe_allow_html=True)
 
-with col1:
-    # Chart
-    st.subheader("📊 Burn vs Capital Chart")
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots()
-    ax.plot(months, cumulative_burn, label='Cumulative Burn', color='#FF385C', linewidth=2)
-    ax.axhline(y=adjusted_raise, linestyle='--', color='#008489', label='Capital Raised')
-    ax.set_xlabel('Month')
-    ax.set_ylabel('Amount ($)')
-    ax.set_title('Cumulative Burn vs Capital')
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    st.pyplot(fig)
+
 
     # Table
     st.subheader("📅 Runway Breakdown")
